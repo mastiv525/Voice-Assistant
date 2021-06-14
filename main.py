@@ -7,21 +7,8 @@ import webbrowser
 import os
 import urllib.request
 import re
-
-import requests
-import sys
-import bs4
-
 import smtplib
-# import yagmail
-# import urllib
-# import urllib3
-
-# [10:56] Magdalena Nozdrzykowska
-# import smtplib, sslport = 587
-# For starttlssmtp_server = "smtp.gmail.com"sender_email = "my@gmail.com"receiver_email = "your@gmail.com"password = input("Type your password and press enter:")message = """\Subject: Hi thereThis message is sent from Python."""context = ssl.create_default_context()with smtplib.SMTP(smtp_server, port) as server:server.ehlo()
-# Can be omittedserver.starttls(context=context)server.ehlo()
-# Can be omittedserver.login(sender_email, password)server.sendmail(sender_email, receiver_email, message)
+from googlesearch import search
 
 
 def speak(audio):
@@ -39,17 +26,11 @@ def search_wikipedia(query):
 
 
 # def search_on_google():
-#     speak("Tell me the phrase")
-#     phrase = input("Tell me the phrase")
-#     speak("I'm searching on google")
-#     res = requests.get('https://google.com/search?q='+''.join(sys.argv[1:]))
-#     res.raise_for_status()
-#     soup = bs4.BeautifulSoup(res.text, "html.parser")
-#     linkElements = soup.select('.r a')
-#     linkToOpen = min(5, len(linkElements))
-#     for i in range(linkToOpen):
-#         webbrowser.open('https://google.com' + linkElements[i].get('href'))
-
+#     speak("What are you looking for")
+#     query = input("What are you looking for: ")
+#
+#     for i in search(query, ld='co.in', lang='en', num=10, start=0, stop=None, pause=2):
+#         print(i)
 
 
 def google_chrome():
@@ -88,7 +69,32 @@ def today():
 
 
 def email():
-    pass
+    gmail_user = input("Wprowadź swój email: ")
+    gmail_password = input("Wprowadź hasło: ")
+    recipient = input("Wprowadź adres email odbiorcy: ")
+    subject = input("Wprowadź tytuł: ")
+    body = input("Wprowadź treść maila: ")
+
+    sent_from = gmail_user
+    to = recipient
+
+    email_text = """\
+        From: %s
+        To: %s
+        Subject: %s
+
+        %s
+        """ % (sent_from, to, subject, body)
+
+    try:
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.ehlo()
+        server.login(gmail_user, gmail_password)
+        server.sendmail(sent_from, to, email_text)
+        server.close()
+        print('Email sent!')
+    except:
+        print('Something went wrong...')
 
 
 def yt_search():
@@ -163,6 +169,7 @@ if __name__ == '__main__':
     email_alias = ['email', 'mail', 'send mail', 'send message', 'gmail']
     today_alias = ['today', 'current day']
     shutdown_alias = ['shutdown', 'turn off', 'close']
+    reboot_alias = ['restart', 'reboot']
     wish_me()
     while True:
         command = input("")
@@ -191,7 +198,7 @@ if __name__ == '__main__':
         elif any(alias in command for alias in today_alias):
             today()
 
-        # elif 'gg':
+        # elif 'phrase':
         #     search_on_google()
 
         elif 'search video':
